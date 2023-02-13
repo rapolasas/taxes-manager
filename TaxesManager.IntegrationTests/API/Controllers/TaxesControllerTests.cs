@@ -14,8 +14,8 @@ namespace TaxesManager.IntegrationTests.API.Controllers
 {
     internal class TaxesControllerTests : TestsBase
     {
-        private const string Route = "api/taxes";
-        private const string FromQuery = Route + "?MunicipalityId={0}&Date={1}";
+        private const string Route = "api/municipalities/{0}/taxes";
+        private const string FromQuery = Route + "?Date={1}";
         private Guid _copenhagenMunicipalityId;
 
         [OneTimeSetUp]
@@ -52,12 +52,14 @@ namespace TaxesManager.IntegrationTests.API.Controllers
             {
                 Amount = 0.3M,
                 StartDate = DateTime.Parse("2023-02-01"),
-                Schedule = TaxSchedule.Weekly,
-                MunicipalityId = _copenhagenMunicipalityId
+                Schedule = TaxSchedule.Weekly
             };
 
             // Act
-            var response = await InvokeHttp(createTaxRequest, request => ApplicationClient.PostAsync(Route, request));
+            var response = await InvokeHttp(
+                createTaxRequest, 
+                request => ApplicationClient.PostAsync(string.Format(Route, _copenhagenMunicipalityId), request));
+            
             var taxResponse = JsonConvert.DeserializeObject<TaxResponse>(await response.Content.ReadAsStringAsync());
 
             // Assert
@@ -77,12 +79,13 @@ namespace TaxesManager.IntegrationTests.API.Controllers
             {
                 Amount = 0.3M,
                 StartDate = DateTime.Parse("2023-03-01"),
-                Schedule = TaxSchedule.Daily,
-                MunicipalityId = _copenhagenMunicipalityId
+                Schedule = TaxSchedule.Daily
             };
 
             // Act
-            var response = await InvokeHttp(createTaxRequest, request => ApplicationClient.PostAsync(Route, request));
+            var response = await InvokeHttp(createTaxRequest,
+                request => ApplicationClient.PostAsync(string.Format(Route, _copenhagenMunicipalityId), request));
+
             var taxResponse = JsonConvert.DeserializeObject<TaxResponse>(await response.Content.ReadAsStringAsync());
 
             using var scope = ServiceScopeFactory.CreateScope();
@@ -102,12 +105,13 @@ namespace TaxesManager.IntegrationTests.API.Controllers
             {
                 Amount = 0.3M,
                 StartDate = DateTime.Parse("2023-03-01"),
-                Schedule = TaxSchedule.Daily,
-                MunicipalityId = Guid.NewGuid()
+                Schedule = TaxSchedule.Daily
             };
 
             // Act
-            var response = await InvokeHttp(createTaxRequest, request => ApplicationClient.PostAsync(Route, request));
+            var response = await InvokeHttp(
+                createTaxRequest,
+                request => ApplicationClient.PostAsync(string.Format(Route, Guid.NewGuid()), request));
 
             // Assert
             Assert.AreEqual(response.StatusCode, HttpStatusCode.NotFound);
@@ -121,13 +125,14 @@ namespace TaxesManager.IntegrationTests.API.Controllers
             {
                 Amount = 0.3M,
                 StartDate = DateTime.Parse("2023-01-01"),
-                Schedule = TaxSchedule.Daily,
-                MunicipalityId = _copenhagenMunicipalityId
+                Schedule = TaxSchedule.Daily
             };
 
             // Act
-            var response = await InvokeHttp(createTaxRequest, request => ApplicationClient.PostAsync(Route, request));
-
+            var response = await InvokeHttp(
+                createTaxRequest,
+                request => ApplicationClient.PostAsync(string.Format(Route, _copenhagenMunicipalityId), request));
+            
             // Assert
             Assert.AreEqual(response.StatusCode, HttpStatusCode.BadRequest);
         }
@@ -140,12 +145,13 @@ namespace TaxesManager.IntegrationTests.API.Controllers
             {
                 Amount = 0.3M,
                 StartDate = DateTime.Parse("2023-01-01"),
-                Schedule = (TaxSchedule)99,
-                MunicipalityId = _copenhagenMunicipalityId
+                Schedule = (TaxSchedule)99
             };
 
             // Act
-            var response = await InvokeHttp(createTaxRequest, request => ApplicationClient.PostAsync(Route, request));
+            var response = await InvokeHttp(
+                createTaxRequest,
+                request => ApplicationClient.PostAsync(string.Format(Route, _copenhagenMunicipalityId), request));
 
             // Assert
             Assert.AreEqual(response.StatusCode, HttpStatusCode.BadRequest);
@@ -155,16 +161,17 @@ namespace TaxesManager.IntegrationTests.API.Controllers
         public async Task GetTax_ShouldReturnNotFound_WhenMunicipalityDoesNotExist()
         {
             // Arrange
+            var municipalityId = Guid.NewGuid();
             var getTaxFilter = new GetTaxFilter
             {
-                MunicipalityId = Guid.NewGuid()
+                Date = DateTime.Parse("2022-01-01")
             };
 
             // Act
-            var response = await InvokeHttp(getTaxFilter, request => ApplicationClient.GetAsync(Route));
+            var response = await ApplicationClient.GetAsync(string.Format(FromQuery, municipalityId, getTaxFilter.Date));
 
             // Assert
-            Assert.AreEqual(response.StatusCode, HttpStatusCode.BadRequest);
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.NotFound);
         }
 
         [Test]
@@ -173,53 +180,53 @@ namespace TaxesManager.IntegrationTests.API.Controllers
             // Arrange
             var getTaxFilter = new GetTaxFilter
             {
-                MunicipalityId = Guid.NewGuid(),
                 Date = DateTime.Parse("2022-01-01")
             };
 
             // Act
-            var response = await InvokeHttp(getTaxFilter, request => ApplicationClient.GetAsync(Route));
+            var response = await ApplicationClient.GetAsync(string.Format(FromQuery, _copenhagenMunicipalityId, getTaxFilter.Date));
 
             // Assert
-            Assert.AreEqual(response.StatusCode, HttpStatusCode.BadRequest);
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.NotFound);
         }
 
         [Test]
         public async Task GetTax_ShouldReturnDailyTax_WhenDailyAndYearlyTaxExists()
         {
             // Arrange
+            var expectedAmount = 0.1M;
             var getTaxFilter = new GetTaxFilter
             {
-                MunicipalityId = _copenhagenMunicipalityId,
                 Date = DateTime.Parse("2023-01-01")
             };
 
             // Act
-            var response = await ApplicationClient.GetAsync(string.Format(FromQuery, getTaxFilter.MunicipalityId, getTaxFilter.Date));
+            var response = await ApplicationClient.GetAsync(string.Format(FromQuery, _copenhagenMunicipalityId, getTaxFilter.Date));
+
             var taxResponse = JsonConvert.DeserializeObject<MunicipalityTaxResponse>(await response.Content.ReadAsStringAsync());
 
             // Assert
             Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
-            Assert.AreEqual(0.1M, taxResponse.Amount);
+            Assert.AreEqual(expectedAmount, taxResponse.Amount);
         }
 
         [Test]
         public async Task GetTax_ShouldReturnMonthlyTax_WhenMonthlyAndYearlyTaxExists()
         {
             // Arrange
+            var expectedAmount = 0.4M;
             var getTaxFilter = new GetTaxFilter
             {
-                MunicipalityId = _copenhagenMunicipalityId,
                 Date = DateTime.Parse("2023-05-01")
             };
 
             // Act
-            var response = await ApplicationClient.GetAsync(string.Format(FromQuery, getTaxFilter.MunicipalityId, getTaxFilter.Date));
+            var response = await ApplicationClient.GetAsync(string.Format(FromQuery, _copenhagenMunicipalityId, getTaxFilter.Date));
             var taxResponse = JsonConvert.DeserializeObject<MunicipalityTaxResponse>(await response.Content.ReadAsStringAsync());
 
             // Assert
             Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
-            Assert.AreEqual(0.4M, taxResponse.Amount);
+            Assert.AreEqual(expectedAmount, taxResponse.Amount);
         }
 
         [OneTimeTearDown]

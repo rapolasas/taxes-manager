@@ -6,9 +6,7 @@ namespace TaxesManager.Application.Contracts.Requests
     public class CreateTaxRequest
     {
         [Required]
-        public Guid MunicipalityId { get; set; }
-
-        [Required]
+        [Range(0, 1)]
         public decimal Amount { get; set; }
 
         [Required]

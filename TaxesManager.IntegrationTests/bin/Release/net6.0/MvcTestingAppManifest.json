@@ -1,6 +1,0 @@
-{
-  "TaxesManager.API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "\/solution\/TaxesManager.API",
-  "TaxesManager.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "\/solution\/TaxesManager.Application",
-  "TaxesManager.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "\/solution\/TaxesManager.Domain",
-  "TaxesManager.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "\/solution\/TaxesManager.Infrastructure"
-}

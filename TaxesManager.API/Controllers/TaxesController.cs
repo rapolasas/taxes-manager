@@ -17,19 +17,19 @@ namespace TaxesManager.API.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet("api/taxes")]
-        public async Task<ActionResult<MunicipalityTaxResponse>> Get([FromQuery] GetTaxFilter taxFilter)
+        [HttpGet("api/municipalities/{municipalityId:guid}/taxes")]
+        public async Task<ActionResult<MunicipalityTaxResponse>> Get([FromRoute] Guid municipalityId, [FromQuery] GetTaxFilter taxFilter)
         {
-            var query = new GetTaxByMunicipalityQuery(taxFilter.MunicipalityId, taxFilter.Date);
+            var query = new GetTaxByMunicipalityQuery(municipalityId, taxFilter.Date);
             var taxQueryResult = await _mediator.Send(query);
 
             return Ok(MunicipalityTaxResponse.FromQueryResult(taxQueryResult));
         }
 
-        [HttpPost("api/taxes")]
-        public async Task<ActionResult<TaxResponse>> Post([FromBody] CreateTaxRequest request)
+        [HttpPost("api/municipalities/{municipalityId:guid}/taxes")]
+        public async Task<ActionResult<TaxResponse>> Post([FromRoute] Guid municipalityId, [FromBody] CreateTaxRequest request)
         {
-            var command = new CreateTaxCommand(request.StartDate, request.MunicipalityId, request.Amount, request.Schedule);
+            var command = new CreateTaxCommand(request.StartDate, municipalityId, request.Amount, request.Schedule);
             var tax = await _mediator.Send(command);
 
             return Ok(TaxResponse.FromDomain(tax));
