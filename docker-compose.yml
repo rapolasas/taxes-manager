@@ -1,0 +1,20 @@
+version: '3.4'
+
+services:
+  database:
+    container_name: database_container
+    image: mcr.microsoft.com/mssql/server
+    environment: 
+      MSSQL_SA_PASSWORD: "Secret123!"
+      ACCEPT_EULA: "y"
+    volumes:
+      - ../tax-sql-volume:/var/opt/mssql/data
+    ports:
+      - "1433:1433" # the port is exposed so that the database would be accessible from the host machine to connect with SSMS for example
+  taxesmanager.api:
+    image: ${DOCKER_REGISTRY-}taxesmanagerapi
+    build:
+      context: .
+      dockerfile: TaxesManager.API/Dockerfile
+    depends_on:
+      - database

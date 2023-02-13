@@ -1,0 +1,12 @@
+C:\CODING\Interviews\Danske\TaxesManager\TaxesManager.Domain\bin\Debug\net6.0\TaxesManager.Domain.deps.json
+C:\CODING\Interviews\Danske\TaxesManager\TaxesManager.Domain\bin\Debug\net6.0\TaxesManager.Domain.dll
+C:\CODING\Interviews\Danske\TaxesManager\TaxesManager.Domain\bin\Debug\net6.0\TaxesManager.Domain.pdb
+C:\CODING\Interviews\Danske\TaxesManager\TaxesManager.Domain\obj\Debug\net6.0\TaxesManager.Domain.csproj.AssemblyReference.cache
+C:\CODING\Interviews\Danske\TaxesManager\TaxesManager.Domain\obj\Debug\net6.0\TaxesManager.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\CODING\Interviews\Danske\TaxesManager\TaxesManager.Domain\obj\Debug\net6.0\TaxesManager.Domain.AssemblyInfoInputs.cache
+C:\CODING\Interviews\Danske\TaxesManager\TaxesManager.Domain\obj\Debug\net6.0\TaxesManager.Domain.AssemblyInfo.cs
+C:\CODING\Interviews\Danske\TaxesManager\TaxesManager.Domain\obj\Debug\net6.0\TaxesManager.Domain.csproj.CoreCompileInputs.cache
+C:\CODING\Interviews\Danske\TaxesManager\TaxesManager.Domain\obj\Debug\net6.0\TaxesManager.Domain.dll
+C:\CODING\Interviews\Danske\TaxesManager\TaxesManager.Domain\obj\Debug\net6.0\refint\TaxesManager.Domain.dll
+C:\CODING\Interviews\Danske\TaxesManager\TaxesManager.Domain\obj\Debug\net6.0\TaxesManager.Domain.pdb
+C:\CODING\Interviews\Danske\TaxesManager\TaxesManager.Domain\obj\Debug\net6.0\ref\TaxesManager.Domain.dll
