@@ -13,7 +13,7 @@ namespace TaxesManager.Infrastructure
     {
         public static IServiceCollection AddTaxesStorage(this IServiceCollection services, IConfiguration configuration)
         {
-            var connectionString = configuration.GetConnectionString("ApiTestsDatabase");
+            var connectionString = configuration.GetConnectionString("Database");
 
             return services
                 .AddDbContext<TaxesManagementDbContext>(options => options.UseSqlServer(connectionString))
